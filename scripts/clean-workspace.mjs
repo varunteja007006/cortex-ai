@@ -3,7 +3,8 @@
 import path from "node:path";
 import { rm, readdir } from "node:fs/promises";
 
-const CACHE_DIR_NAMES = new Set([
+/** Directories that are always caches (safe to remove anywhere, including node_modules) */
+const ALWAYS_CACHE_DIR_NAMES = new Set([
 	".next",
 	".turbo",
 	".expo",
@@ -14,10 +15,20 @@ const CACHE_DIR_NAMES = new Set([
 	".nyc_output",
 	".rpt2_cache",
 	"coverage",
-	"dist",
-	"build",
 	"web-build",
 	".gradle",
+]);
+
+/**
+ * Directories that are build artifacts when at the project root,
+ * but are the actual published code inside node_modules/.
+ * Only treat these as cache outside of node_modules.
+ */
+const BUILD_ARTIFACT_DIR_NAMES = new Set(["dist", "build"]);
+
+const CACHE_DIR_NAMES = new Set([
+	...ALWAYS_CACHE_DIR_NAMES,
+	...BUILD_ARTIFACT_DIR_NAMES,
 ]);
 
 const CACHE_FILE_NAMES = new Set(["tsconfig.tsbuildinfo"]);
@@ -90,6 +101,10 @@ function getTargetSets(mode) {
 	};
 }
 
+function isInsideNodeModules(absolutePath) {
+	return absolutePath.includes(`${path.sep}node_modules${path.sep}`);
+}
+
 async function findTargets(dir, acc, targetDirs, targetFiles) {
 	const entries = await readdir(dir, { withFileTypes: true });
 
@@ -98,6 +113,15 @@ async function findTargets(dir, acc, targetDirs, targetFiles) {
 
 		if (entry.isDirectory()) {
 			if (SKIP_DIR_NAMES.has(entry.name)) continue;
+
+			// Skip build artifact dirs (dist, build) when they live inside node_modules —
+			// those are the package's published code, not user build artifacts.
+			if (
+				BUILD_ARTIFACT_DIR_NAMES.has(entry.name) &&
+				isInsideNodeModules(fullPath)
+			) {
+				continue;
+			}
 
 			if (targetDirs.has(entry.name)) {
 				acc.push(fullPath);

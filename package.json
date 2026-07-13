@@ -12,7 +12,11 @@
     "clean:cache:dry": "node ./scripts/clean-workspace.mjs --mode cache --dry-run",
     "clean:deps": "node ./scripts/clean-workspace.mjs --mode deps",
     "clean:deps:dry": "node ./scripts/clean-workspace.mjs --mode deps --dry-run",
-    "lint": "eslint"
+    "lint": "eslint",
+    "db:generate": "drizzle-kit generate",
+    "db:migrate": "drizzle-kit migrate",
+    "db:studio": "drizzle-kit studio",
+    "db:push": "drizzle-kit push"
   },
   "dependencies": {
     "@base-ui/react": "^1.6.0",

@@ -13,109 +13,84 @@ import {
   SidebarHeader,
   SidebarRail,
 } from "@/components/ui/sidebar"
-import { GalleryVerticalEndIcon, AudioLinesIcon, TerminalIcon, TerminalSquareIcon, BotIcon, BookOpenIcon, Settings2Icon, FrameIcon, PieChartIcon, MapIcon } from "lucide-react"
+import { SparklesIcon, MessageSquareIcon, FileTextIcon, FolderOpenIcon, Settings2Icon, ScrollTextIcon, BookOpenIcon, FilesIcon } from "lucide-react"
 
-// This is sample data.
 const data = {
   user: {
-    name: "shadcn",
-    email: "m@example.com",
-    avatar: "/avatars/shadcn.jpg",
+    name: "Admin",
+    email: "admin@cortex.app",
+    avatar: "/avatars/admin.jpg",
   },
   teams: [
     {
-      name: "Acme Inc",
+      name: "Cortex",
       logo: (
-        <GalleryVerticalEndIcon
+        <SparklesIcon
         />
       ),
-      plan: "Enterprise",
-    },
-    {
-      name: "Acme Corp.",
-      logo: (
-        <AudioLinesIcon
-        />
-      ),
-      plan: "Startup",
-    },
-    {
-      name: "Evil Corp.",
-      logo: (
-        <TerminalIcon
-        />
-      ),
-      plan: "Free",
+      plan: "Pro",
     },
   ],
   navMain: [
     {
-      title: "Playground",
-      url: "#",
+      title: "Chat",
+      url: "/dashboard",
       icon: (
-        <TerminalSquareIcon
+        <MessageSquareIcon
         />
       ),
       isActive: true,
       items: [
         {
+          title: "New Chat",
+          url: "/dashboard",
+        },
+        {
           title: "History",
           url: "#",
         },
+      ],
+    },
+    {
+      title: "Documents",
+      url: "#",
+      icon: (
+        <FileTextIcon
+        />
+      ),
+      items: [
         {
-          title: "Starred",
+          title: "All Documents",
           url: "#",
         },
         {
-          title: "Settings",
+          title: "Scan Docs",
+          url: "/dashboard",
+        },
+        {
+          title: "Upload",
           url: "#",
         },
       ],
     },
     {
-      title: "Models",
+      title: "Collections",
       url: "#",
       icon: (
-        <BotIcon
+        <FolderOpenIcon
         />
       ),
       items: [
         {
-          title: "Genesis",
+          title: "Research Papers",
           url: "#",
         },
         {
-          title: "Explorer",
+          title: "Technical Docs",
           url: "#",
         },
         {
-          title: "Quantum",
-          url: "#",
-        },
-      ],
-    },
-    {
-      title: "Documentation",
-      url: "#",
-      icon: (
-        <BookOpenIcon
-        />
-      ),
-      items: [
-        {
-          title: "Introduction",
-          url: "#",
-        },
-        {
-          title: "Get Started",
-          url: "#",
-        },
-        {
-          title: "Tutorials",
-          url: "#",
-        },
-        {
-          title: "Changelog",
+          title: "Meeting Notes",
           url: "#",
         },
       ],
@@ -133,15 +108,11 @@ const data = {
           url: "#",
         },
         {
-          title: "Team",
+          title: "API Keys",
           url: "#",
         },
         {
           title: "Billing",
-          url: "#",
-        },
-        {
-          title: "Limits",
           url: "#",
         },
       ],
@@ -149,26 +120,26 @@ const data = {
   ],
   projects: [
     {
-      name: "Design Engineering",
+      name: "Research Papers",
       url: "#",
       icon: (
-        <FrameIcon
+        <ScrollTextIcon
         />
       ),
     },
     {
-      name: "Sales & Marketing",
+      name: "Technical Docs",
       url: "#",
       icon: (
-        <PieChartIcon
+        <BookOpenIcon
         />
       ),
     },
     {
-      name: "Travel",
+      name: "Meeting Transcripts",
       url: "#",
       icon: (
-        <MapIcon
+        <FilesIcon
         />
       ),
     },
