@@ -3,8 +3,9 @@
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { DataTable, type Column } from "@/components/data-table";
-import { Loader2, RefreshCw, Scan } from "lucide-react";
+import { Loader2, RefreshCw, Scan, Brain } from "lucide-react";
 import { useDocuments, useScanDocuments } from "@/api/documents/query";
+import { useIngestDocuments } from "@/api/ingest/query";
 import type { Document } from "@/api/documents/types";
 import { formatDate, truncateHash } from "@/api/documents/helpers";
 
@@ -54,6 +55,10 @@ export function DocumentsTable() {
   } = useDocuments();
 
   const scanMutation = useScanDocuments();
+  const ingestMutation = useIngestDocuments();
+
+  const pendingDocs =
+    documents?.filter((doc) => !doc.ingested).length ?? 0;
 
   const handleScan = () => {
     scanMutation.mutate(undefined, {
@@ -89,6 +94,19 @@ export function DocumentsTable() {
               {scanMutation.error?.message ?? "Scan failed"}
             </span>
           )}
+          {ingestMutation.isSuccess && ingestMutation.data?.success && (
+            <span className="text-sm text-muted-foreground">
+              Ingested {ingestMutation.data.ingested} file(s)
+              {ingestMutation.data.failed &&
+                ingestMutation.data.failed > 0 &&
+                `, ${ingestMutation.data.failed} failed`}
+            </span>
+          )}
+          {ingestMutation.isError && (
+            <span className="text-sm text-destructive">
+              {ingestMutation.error?.message ?? "Ingest failed"}
+            </span>
+          )}
           <Button
             variant="outline"
             size="sm"
@@ -114,6 +132,23 @@ export function DocumentsTable() {
               <>
                 <Scan className="mr-1 h-4 w-4" />
                 Scan Docs
+              </>
+            )}
+          </Button>
+          <Button
+            onClick={() => ingestMutation.mutate()}
+            disabled={ingestMutation.isPending || pendingDocs === 0}
+            size="sm"
+          >
+            {ingestMutation.isPending ? (
+              <>
+                <Loader2 className="mr-1 h-4 w-4 animate-spin" />
+                Ingesting…
+              </>
+            ) : (
+              <>
+                <Brain className="mr-1 h-4 w-4" />
+                Ingest{ingestMutation.isSuccess ? "ed" : " All"}
               </>
             )}
           </Button>
