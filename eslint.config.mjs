@@ -13,6 +13,17 @@ const eslintConfig = defineConfig([
     "build/**",
     "next-env.d.ts",
   ]),
+  // Suppress set-state-in-effect only for files where the pattern is
+  // intentional and correct (Embla carousel API init, matchMedia init).
+  {
+    files: [
+      "components/ui/carousel.tsx",
+      "hooks/use-mobile.ts",
+    ],
+    rules: {
+      "react-hooks/set-state-in-effect": "off",
+    },
+  },
 ]);
 
 export default eslintConfig;

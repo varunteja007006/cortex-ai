@@ -1,6 +1,5 @@
 "use client";
 
-import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -9,39 +8,16 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-
-type ScanResult = {
-  filename: string;
-  filepath: string;
-  fileHash: string;
-  ingested: boolean;
-  status: "new" | "existing" | "unchanged";
-};
-
-type ScanResponse =
-  | { success: true; scanned: number; results: ScanResult[] }
-  | { success: false; error: string };
+import { useScanDocuments } from "@/api/documents/query";
 
 export function ScanDocsButton() {
-  const [loading, setLoading] = useState(false);
-  const [response, setResponse] = useState<ScanResponse | null>(null);
+  const scanMutation = useScanDocuments();
 
-  async function handleScan() {
-    setLoading(true);
-    setResponse(null);
-    try {
-      const res = await fetch("/api/scan-docs");
-      const data: ScanResponse = await res.json();
-      setResponse(data);
-    } catch (err) {
-      setResponse({
-        success: false,
-        error: err instanceof Error ? err.message : "Request failed",
-      });
-    } finally {
-      setLoading(false);
-    }
+  function handleScan() {
+    scanMutation.mutate();
   }
+
+  const response = scanMutation.data;
 
   return (
     <Card>
@@ -53,8 +29,12 @@ export function ScanDocsButton() {
         </CardDescription>
       </CardHeader>
       <CardContent className="flex flex-col gap-4">
-        <Button onClick={handleScan} disabled={loading} className="w-fit">
-          {loading ? "Scanning..." : "Scan Docs"}
+        <Button
+          onClick={handleScan}
+          disabled={scanMutation.isPending}
+          className="w-fit"
+        >
+          {scanMutation.isPending ? "Scanning..." : "Scan Docs"}
         </Button>
 
         {response && (
@@ -110,6 +90,12 @@ export function ScanDocsButton() {
               <p className="text-destructive">Error: {response.error}</p>
             )}
           </div>
+        )}
+
+        {scanMutation.isError && !response && (
+          <p className="text-destructive text-sm">
+            Error: {scanMutation.error?.message ?? "Request failed"}
+          </p>
         )}
       </CardContent>
     </Card>

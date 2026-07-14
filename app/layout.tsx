@@ -3,6 +3,7 @@ import { Geist, Geist_Mono, Source_Sans_3, DM_Sans } from "next/font/google";
 import { ThemeProvider } from "next-themes";
 import "./globals.css";
 import { cn } from "@/lib/utils";
+import { QueryProvider } from "@/providers/query-provider";
 
 const dmSansHeading = DM_Sans({ subsets: ["latin"], variable: "--font-heading" });
 
@@ -36,7 +37,9 @@ export default function RootLayout({
     >
       <body className="min-h-full flex flex-col">
         <ThemeProvider attribute="class" disableTransitionOnChange>
-          <main className="flex-1 flex flex-col">{children}</main>
+          <QueryProvider>
+            <main className="flex-1 flex flex-col">{children}</main>
+          </QueryProvider>
         </ThemeProvider>
       </body>
     </html>

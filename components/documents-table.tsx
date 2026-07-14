@@ -1,24 +1,12 @@
 "use client";
 
-import { useEffect, useState, useCallback } from "react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { DataTable, type Column } from "@/components/data-table";
 import { Loader2, RefreshCw, Scan } from "lucide-react";
-
-type Document = {
-  id: string;
-  filename: string;
-  filepath: string;
-  fileHash: string;
-  ingested: boolean;
-  createdAt: string;
-  updatedAt: string;
-};
-
-type ScanResponse =
-  | { success: true; scanned: number; results: unknown[] }
-  | { success: false; error: string };
+import { useDocuments, useScanDocuments } from "@/api/documents/query";
+import type { Document } from "@/api/documents/types";
+import { formatDate, truncateHash } from "@/api/documents/helpers";
 
 const columns: Column<Document>[] = [
   {
@@ -38,10 +26,7 @@ const columns: Column<Document>[] = [
     headClassName: "hidden sm:table-cell",
     cellClassName:
       "hidden font-mono text-xs text-muted-foreground sm:table-cell",
-    accessor: (doc) =>
-      doc.fileHash.length > 16
-        ? `${doc.fileHash.slice(0, 16)}…`
-        : doc.fileHash,
+    accessor: (doc) => truncateHash(doc.fileHash),
   },
   {
     header: "Status",
@@ -56,66 +41,30 @@ const columns: Column<Document>[] = [
     header: "Created",
     headClassName: "hidden lg:table-cell",
     cellClassName: "hidden text-muted-foreground lg:table-cell",
-    accessor: (doc) =>
-      new Date(doc.createdAt).toLocaleDateString(undefined, {
-        year: "numeric",
-        month: "short",
-        day: "numeric",
-        hour: "2-digit",
-        minute: "2-digit",
-      }),
+    accessor: (doc) => formatDate(doc.createdAt),
   },
 ];
 
 export function DocumentsTable() {
-  const [documents, setDocuments] = useState<Document[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [scanning, setScanning] = useState(false);
-  const [scanFeedback, setScanFeedback] = useState<string | null>(null);
+  const {
+    data: documents,
+    isLoading,
+    isRefetching,
+    refetch,
+  } = useDocuments();
 
-  const fetchDocuments = useCallback(async () => {
-    setLoading(true);
-    try {
-      const res = await fetch("/api/documents");
-      const data = await res.json();
-      if (data.documents) {
-        setDocuments(data.documents);
-      }
-    } catch {
-      // noop
-    } finally {
-      setLoading(false);
-    }
-  }, []);
+  const scanMutation = useScanDocuments();
 
-  useEffect(() => {
-    fetchDocuments();
-  }, [fetchDocuments]);
-
-  async function handleScan() {
-    setScanning(true);
-    setScanFeedback(null);
-    try {
-      const res = await fetch("/api/scan-docs");
-      const data: ScanResponse = await res.json();
-      if (data.success) {
-        setScanFeedback(
-          `Scan complete — found ${data.scanned} file(s)`,
-        );
-        await fetchDocuments();
-      } else {
-        setScanFeedback(
-          "error" in data ? data.error : "Scan failed",
-        );
-      }
-    } catch (err) {
-      setScanFeedback(
-        err instanceof Error ? err.message : "Request failed",
-      );
-    } finally {
-      setScanning(false);
-    }
-  }
+  const handleScan = () => {
+    scanMutation.mutate(undefined, {
+      onSuccess: (data) => {
+        if (!data.success) {
+          // The error toast/feedback can be handled at a higher level
+          console.error("Scan failed:", data.error);
+        }
+      },
+    });
+  };
 
   return (
     <div className="space-y-4">
@@ -124,30 +73,39 @@ export function DocumentsTable() {
         <div>
           <h2 className="text-lg font-semibold">Tracked Documents</h2>
           <p className="text-sm text-muted-foreground">
-            {loading
+            {isLoading
               ? "Loading…"
-              : `${documents.length} document${documents.length === 1 ? "" : "s"} tracked`}
+              : `${documents?.length ?? 0} document${documents?.length === 1 ? "" : "s"} tracked`}
           </p>
         </div>
         <div className="flex items-center gap-2">
-          {scanFeedback && (
+          {scanMutation.isSuccess && scanMutation.data?.success && (
             <span className="text-sm text-muted-foreground">
-              {scanFeedback}
+              Scan complete — found {scanMutation.data.scanned} file(s)
+            </span>
+          )}
+          {scanMutation.isError && (
+            <span className="text-sm text-destructive">
+              {scanMutation.error?.message ?? "Scan failed"}
             </span>
           )}
           <Button
             variant="outline"
             size="sm"
-            onClick={fetchDocuments}
-            disabled={loading}
+            onClick={() => refetch()}
+            disabled={isLoading || isRefetching}
           >
             <RefreshCw
-              className={`mr-1 h-4 w-4 ${loading ? "animate-spin" : ""}`}
+              className={`mr-1 h-4 w-4 ${isRefetching ? "animate-spin" : ""}`}
             />
             Refresh
           </Button>
-          <Button onClick={handleScan} disabled={scanning} size="sm">
-            {scanning ? (
+          <Button
+            onClick={handleScan}
+            disabled={scanMutation.isPending}
+            size="sm"
+          >
+            {scanMutation.isPending ? (
               <>
                 <Loader2 className="mr-1 h-4 w-4 animate-spin" />
                 Scanning…
@@ -165,9 +123,9 @@ export function DocumentsTable() {
       {/* Table */}
       <DataTable
         columns={columns}
-        data={documents}
+        data={documents ?? []}
         keyExtractor={(doc) => doc.id}
-        loading={loading}
+        loading={isLoading}
         emptyMessage={
           <>
             No documents tracked yet. Click <strong>Scan Docs</strong> to scan
