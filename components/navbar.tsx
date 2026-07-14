@@ -41,13 +41,13 @@ export function Navbar() {
             <>
               <Link
                 href="/sign-in"
-                className="inline-flex shrink-0 items-center justify-center rounded-lg border border-transparent bg-clip-padding text-sm font-medium whitespace-nowrap transition-all outline-none select-none h-7 gap-1 rounded-[min(var(--radius-md),12px)] px-2.5 text-[0.8rem] hover:bg-muted hover:text-foreground"
+                className="inline-flex shrink-0 items-center justify-center rounded-lg border border-transparent bg-clip-padding text-sm font-medium whitespace-nowrap transition-all outline-none select-none h-7 gap-1 px-2.5 text-[0.8rem] hover:bg-muted hover:text-foreground"
               >
                 Sign In
               </Link>
               <Link
                 href="/sign-up"
-                className="inline-flex shrink-0 items-center justify-center rounded-lg border border-transparent bg-clip-padding text-sm font-medium whitespace-nowrap transition-all outline-none select-none h-7 gap-1 rounded-[min(var(--radius-md),12px)] px-2.5 text-[0.8rem] bg-primary text-primary-foreground hover:bg-primary/80"
+                className="inline-flex shrink-0 items-center justify-center rounded-lg border border-transparent bg-clip-padding text-sm font-medium whitespace-nowrap transition-all outline-none select-none h-7 gap-1 px-2.5 text-[0.8rem] bg-primary text-primary-foreground hover:bg-primary/80"
               >
                 Sign Up
               </Link>
@@ -58,7 +58,7 @@ export function Navbar() {
             <>
               <Link
                 href="/dashboard"
-                className="inline-flex shrink-0 items-center justify-center rounded-lg border border-transparent bg-clip-padding text-sm font-medium whitespace-nowrap transition-all outline-none select-none h-7 gap-1 rounded-[min(var(--radius-md),12px)] px-2.5 text-[0.8rem] hover:bg-muted hover:text-foreground"
+                className="inline-flex shrink-0 items-center justify-center rounded-lg border border-transparent bg-clip-padding text-sm font-medium whitespace-nowrap transition-all outline-none select-none h-7 gap-1 px-2.5 text-[0.8rem] hover:bg-muted hover:text-foreground"
               >
                 Dashboard
               </Link>
