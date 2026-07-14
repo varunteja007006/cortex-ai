@@ -3,7 +3,6 @@
 import * as React from "react"
 
 import { NavMain } from "@/components/nav-main"
-import { NavProjects } from "@/components/nav-projects"
 import { NavUser } from "@/components/nav-user"
 import { TeamSwitcher } from "@/components/team-switcher"
 import {
@@ -15,7 +14,7 @@ import {
 } from "@/components/ui/sidebar"
 import { Skeleton } from "@/components/ui/skeleton"
 import { useSession } from "@/api/auth/query"
-import { SparklesIcon, MessageSquareIcon, FileTextIcon, FolderOpenIcon, Settings2Icon, ScrollTextIcon, BookOpenIcon, FilesIcon } from "lucide-react"
+import { SparklesIcon, MessageSquareIcon, FileTextIcon, FolderOpenIcon, Settings2Icon } from "lucide-react"
 
 const teams = [
   {
@@ -28,22 +27,22 @@ const teams = [
 const navMain = [
   {
     title: "Chat",
-    url: "/dashboard",
+    url: "/dashboard/chat",
     icon: <MessageSquareIcon />,
     isActive: true,
     items: [
-      { title: "New Chat", url: "/dashboard" },
-      { title: "History", url: "#" },
+      { title: "New Chat", url: "/dashboard/chat" },
+      { title: "History", url: "/dashboard/chat" },
     ],
   },
   {
     title: "Documents",
-    url: "#",
+    url: "/dashboard/documents",
     icon: <FileTextIcon />,
     items: [
-      { title: "All Documents", url: "#" },
+      { title: "All Documents", url: "/dashboard/documents" },
       { title: "Scan Docs", url: "/dashboard" },
-      { title: "Upload", url: "#" },
+      { title: "Upload", url: "/dashboard/documents" },
     ],
   },
   {
@@ -63,15 +62,9 @@ const navMain = [
     items: [
       { title: "General", url: "#" },
       { title: "API Keys", url: "#" },
-      { title: "Billing", url: "#" },
+      { title: "Billing", url: "/dashboard/billing" },
     ],
   },
-]
-
-const projects = [
-  { name: "Research Papers", url: "#", icon: <ScrollTextIcon /> },
-  { name: "Technical Docs", url: "#", icon: <BookOpenIcon /> },
-  { name: "Meeting Transcripts", url: "#", icon: <FilesIcon /> },
 ]
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
@@ -84,7 +77,6 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       </SidebarHeader>
       <SidebarContent>
         <NavMain items={navMain} />
-        <NavProjects projects={projects} />
       </SidebarContent>
       <SidebarFooter>
         {isLoading ? (

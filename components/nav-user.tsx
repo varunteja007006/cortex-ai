@@ -17,7 +17,6 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from "@/components/ui/sidebar"
-import { useTheme } from "next-themes"
 import {
   ChevronsUpDownIcon,
   SparklesIcon,
@@ -25,8 +24,6 @@ import {
   CreditCardIcon,
   BellIcon,
   LogOutIcon,
-  MoonIcon,
-  SunIcon,
 } from "lucide-react"
 import { authClient } from "@/lib/auth-client"
 import { getUserInitials } from "@/api/auth/helpers"
@@ -34,7 +31,6 @@ import type { User } from "@/api/auth/types"
 
 export function NavUser({ user }: { user: User }) {
   const { isMobile } = useSidebar()
-  const { theme, setTheme } = useTheme()
   const router = useRouter()
 
   async function handleSignOut() {
@@ -84,40 +80,28 @@ export function NavUser({ user }: { user: User }) {
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
-              <DropdownMenuItem>
+              <DropdownMenuItem onClick={() => router.push("/dashboard/upgrade")}>
                 <SparklesIcon />
                 Upgrade to Pro
               </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
-              <DropdownMenuItem>
+              <DropdownMenuItem onClick={() => router.push("/dashboard/account")}>
                 <BadgeCheckIcon />
                 Account
               </DropdownMenuItem>
-              <DropdownMenuItem>
+              <DropdownMenuItem onClick={() => router.push("/dashboard/billing")}>
                 <CreditCardIcon />
                 Billing
               </DropdownMenuItem>
-              <DropdownMenuItem>
+              <DropdownMenuItem onClick={() => router.push("/dashboard/notifications")}>
                 <BellIcon />
                 Notifications
               </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
-            <DropdownMenuGroup>
-              <DropdownMenuItem
-                onSelect={(e) => {
-                  e.preventDefault()
-                  setTheme(theme === "dark" ? "light" : "dark")
-                }}
-              >
-                {theme === "dark" ? <SunIcon /> : <MoonIcon />}
-                {theme === "dark" ? "Light Mode" : "Dark Mode"}
-              </DropdownMenuItem>
-            </DropdownMenuGroup>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem onSelect={handleSignOut}>
+            <DropdownMenuItem onClick={handleSignOut}>
               <LogOutIcon />
               Log out
             </DropdownMenuItem>
