@@ -128,6 +128,11 @@ async function findTargets(dir, acc, targetDirs, targetFiles) {
 				continue;
 			}
 
+			// Never recurse into node_modules — those are installed
+			// package artifacts and traversing them will pick up dist/
+			// and build/ dirs inside the pnpm virtual store, corrupting packages.
+			if (entry.name === "node_modules") continue;
+
 			await findTargets(fullPath, acc, targetDirs, targetFiles);
 			continue;
 		}
