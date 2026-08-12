@@ -14,7 +14,7 @@ import {
 } from "@/components/ui/sidebar"
 import { Skeleton } from "@/components/ui/skeleton"
 import { useSession } from "@/api/auth/query"
-import { SparklesIcon, MessageSquareIcon, FileTextIcon, FolderOpenIcon, Settings2Icon } from "lucide-react"
+import { SparklesIcon, MessageSquareIcon, FileTextIcon } from "lucide-react"
 
 const teams = [
   {
@@ -43,26 +43,6 @@ const navMain = [
       { title: "All Documents", url: "/dashboard/documents" },
       { title: "Scan Docs", url: "/dashboard" },
       { title: "Upload", url: "/dashboard/documents" },
-    ],
-  },
-  {
-    title: "Collections",
-    url: "#",
-    icon: <FolderOpenIcon />,
-    items: [
-      { title: "Research Papers", url: "#" },
-      { title: "Technical Docs", url: "#" },
-      { title: "Meeting Notes", url: "#" },
-    ],
-  },
-  {
-    title: "Settings",
-    url: "#",
-    icon: <Settings2Icon />,
-    items: [
-      { title: "General", url: "#" },
-      { title: "API Keys", url: "#" },
-      { title: "Billing", url: "/dashboard/billing" },
     ],
   },
 ]

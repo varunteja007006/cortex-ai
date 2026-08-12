@@ -2,6 +2,7 @@ services:
   postgres:
     image: pgvector/pgvector:pg17
     container_name: next_rag_postgres
+    restart: always
     environment:
       POSTGRES_USER: ${POSTGRES_USER:-next_rag}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-next_rag}
@@ -19,6 +20,7 @@ services:
   valkey:
     image: valkey/valkey:8
     container_name: next_rag_valkey
+    restart: always
     ports:
       - "6379:6379"
     volumes:
