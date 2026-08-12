@@ -5,43 +5,64 @@ import "./globals.css";
 import { cn } from "@/lib/utils";
 import { QueryProvider } from "@/providers/query-provider";
 
-const dmSansHeading = DM_Sans({ subsets: ["latin"], variable: "--font-heading" });
+const dmSansHeading = DM_Sans({
+	subsets: ["latin"],
+	variable: "--font-heading",
+});
 
-const sourceSans3 = Source_Sans_3({ subsets: ["latin"], variable: "--font-sans" });
+const sourceSans3 = Source_Sans_3({
+	subsets: ["latin"],
+	variable: "--font-sans",
+});
 
 const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
+	variable: "--font-geist-sans",
+	subsets: ["latin"],
 });
 
 const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
+	variable: "--font-geist-mono",
+	subsets: ["latin"],
 });
 
 export const metadata: Metadata = {
-  title: "Cortex — AI-Powered RAG Chat",
-  description: "Chat with your documents using retrieval-augmented generation.",
+	title: "Cortex — AI-Powered RAG Chat",
+	description: "Chat with your documents using retrieval-augmented generation.",
 };
 
 export default function RootLayout({
-  children,
+	children,
 }: Readonly<{
-  children: React.ReactNode;
+	children: React.ReactNode;
 }>) {
-  return (
-    <html
-      lang="en"
-      suppressHydrationWarning
-      className={cn("h-full", "antialiased", geistSans.variable, geistMono.variable, "font-sans", sourceSans3.variable, dmSansHeading.variable)}
-    >
-      <body className="min-h-full flex flex-col">
-        <ThemeProvider attribute="class" disableTransitionOnChange>
-          <QueryProvider>
-            <main className="flex-1 flex flex-col">{children}</main>
-          </QueryProvider>
-        </ThemeProvider>
-      </body>
-    </html>
-  );
+	return (
+		<html
+			lang="en"
+			suppressHydrationWarning
+			className={cn(
+				"h-full",
+				"antialiased",
+				geistSans.variable,
+				geistMono.variable,
+				"font-sans",
+				sourceSans3.variable,
+				dmSansHeading.variable,
+			)}
+		>
+			<head>
+				<script
+					async
+					crossOrigin="anonymous"
+					src="https://tweakcn.com/live-preview.min.js"
+				/>
+			</head>
+			<body className="min-h-full flex flex-col">
+				<ThemeProvider attribute="class" disableTransitionOnChange>
+					<QueryProvider>
+						<main className="flex-1 flex flex-col">{children}</main>
+					</QueryProvider>
+				</ThemeProvider>
+			</body>
+		</html>
+	);
 }
