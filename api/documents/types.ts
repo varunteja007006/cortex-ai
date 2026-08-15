@@ -34,7 +34,21 @@ export type ScanErrorResponse = {
 /** Union type for scan endpoint response */
 export type ScanResponse = ScanSuccessResponse | ScanErrorResponse;
 
+/** Query params for paginated GET /api/documents */
+export type DocumentsQuery = {
+  page?: number;
+  pageSize?: number;
+  sort?: "filename" | "filepath" | "fileHash" | "ingested" | "createdAt" | "updatedAt";
+  sortDir?: "asc" | "desc";
+  search?: string;
+  status?: "ingested" | "pending";
+};
+
 /** Response from GET /api/documents */
 export type DocumentsResponse = {
   documents: Document[];
+  total: number;
+  page: number;
+  pageSize: number;
+  pageCount: number;
 };

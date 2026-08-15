@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono, Source_Sans_3, DM_Sans } from "next/font/google";
 import { ThemeProvider } from "next-themes";
+import { NuqsAdapter } from "nuqs/adapters/next/app";
 import "./globals.css";
 import { cn } from "@/lib/utils";
 import { QueryProvider } from "@/providers/query-provider";
@@ -57,11 +58,13 @@ export default function RootLayout({
 				/>
 			</head>
 			<body className="min-h-full flex flex-col">
-				<ThemeProvider attribute="class" disableTransitionOnChange>
-					<QueryProvider>
-						<main className="flex-1 flex flex-col">{children}</main>
-					</QueryProvider>
-				</ThemeProvider>
+<ThemeProvider attribute="class" disableTransitionOnChange>
+              <NuqsAdapter>
+                <QueryProvider>
+                  <main className="flex flex-1 flex-col">{children}</main>
+                </QueryProvider>
+              </NuqsAdapter>
+            </ThemeProvider>
 			</body>
 		</html>
 	);
