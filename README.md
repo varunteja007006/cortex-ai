@@ -147,3 +147,5 @@ hooks/                        # Custom hooks (use-mobile)
 - **AI SDK 7**: Planned integration uses `streamText` with `convertToModelMessages` and tool-based resource access
 - **React Compiler**: Enabled — components are implicitly memoized
 - **Tailwind v4**: CSS-first configuration in `app/globals.css` (no `tailwind.config.js`)
+
+Version : 0.0.1
