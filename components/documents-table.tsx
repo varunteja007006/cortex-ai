@@ -48,17 +48,18 @@ const columns: Column<Document>[] = [
 
 export function DocumentsTable() {
   const {
-    data: documents,
+    data: documentsResponse,
     isLoading,
     isRefetching,
     refetch,
   } = useDocuments();
 
+  const documents = documentsResponse?.documents ?? [];
   const scanMutation = useScanDocuments();
   const ingestMutation = useIngestDocuments();
 
   const pendingDocs =
-    documents?.filter((doc) => !doc.ingested).length ?? 0;
+    documents.filter((doc) => !doc.ingested).length;
 
   const handleScan = () => {
     scanMutation.mutate(undefined, {
@@ -80,7 +81,7 @@ export function DocumentsTable() {
           <p className="text-sm text-muted-foreground">
             {isLoading
               ? "Loading…"
-              : `${documents?.length ?? 0} document${documents?.length === 1 ? "" : "s"} tracked`}
+              : `${documents.length} document${documents.length === 1 ? "" : "s"} tracked`}
           </p>
         </div>
         <div className="flex items-center gap-2">
@@ -158,7 +159,7 @@ export function DocumentsTable() {
       {/* Table */}
       <DataTable
         columns={columns}
-        data={documents ?? []}
+        data={documents}
         keyExtractor={(doc) => doc.id}
         loading={isLoading}
         emptyMessage={

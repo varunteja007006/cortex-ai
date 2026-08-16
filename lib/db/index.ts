@@ -11,4 +11,8 @@ const pool = new Pool({
 	connectionString: DATABASE_URL,
 });
 
+pool.on("connect", async (client) => {
+	await client.query("CREATE EXTENSION IF NOT EXISTS vector");
+});
+
 export const db = drizzle({ client: pool });

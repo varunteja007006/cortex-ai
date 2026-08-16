@@ -1,25 +1,25 @@
 services:
   postgres:
     image: pgvector/pgvector:pg17
-    container_name: next_rag_postgres
+    container_name: cortex_ai_postgres
     restart: always
     environment:
-      POSTGRES_USER: ${POSTGRES_USER:-next_rag}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-next_rag}
-      POSTGRES_DB: ${POSTGRES_DB:-next_rag}
+      POSTGRES_USER: ${POSTGRES_USER:-cortex_ai}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-cortex_ai}
+      POSTGRES_DB: ${POSTGRES_DB:-cortex_ai}
     ports:
       - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-next_rag} -d ${POSTGRES_DB:-next_rag}"]
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-cortex_ai} -d ${POSTGRES_DB:-cortex_ai}"]
       interval: 5s
       timeout: 5s
       retries: 5
 
   valkey:
     image: valkey/valkey:8
-    container_name: next_rag_valkey
+    container_name: cortex_ai_valkey
     restart: always
     ports:
       - "6379:6379"
