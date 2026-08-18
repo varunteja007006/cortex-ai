@@ -80,22 +80,22 @@ export function NavUser({ user }: { user: User }) {
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
-              <DropdownMenuItem onClick={() => router.push("/dashboard/upgrade")}>
+              <DropdownMenuItem onClick={() => router.push("/user/upgrade")}>
                 <SparklesIcon />
                 Upgrade to Pro
               </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
-              <DropdownMenuItem onClick={() => router.push("/dashboard/account")}>
+              <DropdownMenuItem onClick={() => router.push("/user/account")}>
                 <BadgeCheckIcon />
                 Account
               </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => router.push("/dashboard/billing")}>
+              <DropdownMenuItem onClick={() => router.push("/user/billing")}>
                 <CreditCardIcon />
                 Billing
               </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => router.push("/dashboard/notifications")}>
+              <DropdownMenuItem onClick={() => router.push("/user/notifications")}>
                 <BellIcon />
                 Notifications
               </DropdownMenuItem>

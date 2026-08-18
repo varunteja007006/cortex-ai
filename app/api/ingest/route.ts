@@ -6,17 +6,40 @@ import { documents } from "@/lib/db/schema/documents";
 import { resources } from "@/lib/db/schema/resources";
 import { embeddings } from "@/lib/db/schema/embeddings";
 import { generateChunks, generateEmbeddings } from "@/lib/ai/embedding";
-import { eq } from "drizzle-orm";
+import { and, eq } from "drizzle-orm";
+import { getCurrentUser } from "@/lib/session";
+import { getActiveWorkspace } from "@/lib/workspaces";
 
 const SUPPORTED_EXTENSIONS = new Set([".txt", ".md", ".mdx", ".csv"]);
 
 export async function POST() {
   try {
-    // 1. Find all uningested documents
+    const user = await getCurrentUser();
+    if (!user) {
+      return NextResponse.json(
+        { success: false, error: "Unauthorized" },
+        { status: 401 },
+      );
+    }
+
+    const workspace = await getActiveWorkspace(user.id);
+    if (!workspace) {
+      return NextResponse.json(
+        { success: false, error: "No active workspace" },
+        { status: 400 },
+      );
+    }
+
+    // 1. Find all uningested documents in the active workspace
     const uningested = await db
       .select()
       .from(documents)
-      .where(eq(documents.ingested, false));
+      .where(
+        and(
+          eq(documents.workspaceId, workspace.id),
+          eq(documents.ingested, false),
+        ),
+      );
 
     if (uningested.length === 0) {
       return NextResponse.json({
@@ -52,7 +75,7 @@ export async function POST() {
         // 3. Insert resource
         const [resource] = await db
           .insert(resources)
-          .values({ content })
+          .values({ workspaceId: workspace.id, content })
           .returning({ id: resources.id });
 
         // 4. Chunk and embed
@@ -63,6 +86,7 @@ export async function POST() {
         if (chunks.length > 0) {
           await db.insert(embeddings).values(
             chunks.map((chunk, i) => ({
+              workspaceId: workspace.id,
               resourceId: resource.id,
               content: chunk,
               embedding: vectors[i],

@@ -14,11 +14,13 @@ interface DataTableSearchProps {
 export function DataTableSearch({ placeholder = "Search..." }: DataTableSearchProps) {
   const [value, setValue] = useQueryState("search", parseAsString.withDefault(""))
   const [draft, setDraft] = React.useState(value)
+  const [prevValue, setPrevValue] = React.useState(value)
   const timer = React.useRef<ReturnType<typeof setTimeout> | null>(null)
 
-  React.useEffect(() => {
+  if (value !== prevValue) {
+    setPrevValue(value)
     setDraft(value)
-  }, [value])
+  }
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const next = e.target.value

@@ -4,7 +4,7 @@ import * as React from "react"
 
 import { NavMain } from "@/components/nav-main"
 import { NavUser } from "@/components/nav-user"
-import { TeamSwitcher } from "@/components/team-switcher"
+import { WorkspaceSwitcher } from "@/components/workspace-switcher"
 import {
   Sidebar,
   SidebarContent,
@@ -14,15 +14,7 @@ import {
 } from "@/components/ui/sidebar"
 import { Skeleton } from "@/components/ui/skeleton"
 import { useSession } from "@/api/auth/query"
-import { SparklesIcon, MessageSquareIcon, FileTextIcon } from "lucide-react"
-
-const teams = [
-  {
-    name: "Cortex",
-    logo: <SparklesIcon />,
-    plan: "Pro",
-  },
-]
+import { MessageSquareIcon, FileTextIcon, BotIcon } from "lucide-react"
 
 const navMain = [
   {
@@ -41,8 +33,18 @@ const navMain = [
     icon: <FileTextIcon />,
     items: [
       { title: "All Documents", url: "/dashboard/documents" },
-      { title: "Scan Docs", url: "/dashboard" },
-      { title: "Upload", url: "/dashboard/documents" },
+      { title: "Scan Docs", url: "/dashboard/documents/scan-docs" },
+      { title: "Ingest Docs", url: "/dashboard/documents/ingest-docs" },
+      { title: "Audit Logs", url: "/dashboard/documents/audit-logs" },
+    ],
+  },
+  {
+    title: "Agent",
+    url: "/dashboard/agent/builder",
+    icon: <BotIcon />,
+    items: [
+      { title: "Builder", url: "/dashboard/agent/builder" },
+      { title: "Connectors", url: "/dashboard/agent/connectors" },
     ],
   },
 ]
@@ -53,7 +55,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   return (
     <Sidebar collapsible="icon" {...props}>
       <SidebarHeader>
-        <TeamSwitcher teams={teams} />
+        <WorkspaceSwitcher />
       </SidebarHeader>
       <SidebarContent>
         <NavMain items={navMain} />

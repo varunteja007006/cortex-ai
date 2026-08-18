@@ -5,6 +5,8 @@ export type Document = {
   filepath: string;
   fileHash: string;
   ingested: boolean;
+  topicId: string | null;
+  folderId: string | null;
   createdAt: string;
   updatedAt: string;
 };

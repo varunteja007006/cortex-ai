@@ -1,8 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { documents } from "@/lib/db/schema/documents";
-import { and, asc, count, desc, eq, ilike, or, sql } from "drizzle-orm";
+import { and, asc, count, desc, eq, ilike, or } from "drizzle-orm";
 import type { SQL } from "drizzle-orm";
+import { getCurrentUser } from "@/lib/session";
+import { getActiveWorkspace } from "@/lib/workspaces";
 
 const MAX_PAGE_SIZE = 100;
 const DEFAULT_PAGE_SIZE = 10;
@@ -20,6 +22,19 @@ type SortColumn = keyof typeof SORTABLE_COLUMNS;
 
 export async function GET(request: NextRequest) {
   try {
+    const user = await getCurrentUser();
+    if (!user) {
+      return NextResponse.json(
+        { success: false, error: "Unauthorized" },
+        { status: 401 },
+      );
+    }
+
+    const workspace = await getActiveWorkspace(user.id);
+    if (!workspace) {
+      return NextResponse.json({ documents: [], total: 0, page: 1, pageSize: 10, pageCount: 1 });
+    }
+
     const searchParams = request.nextUrl.searchParams;
 
     // Pagination
@@ -39,18 +54,17 @@ export async function GET(request: NextRequest) {
     const order = sortDir === "asc" ? asc(sortableColumn) : desc(sortableColumn);
 
     // Filters
-    const conditions: SQL[] = [];
+    const conditions: SQL[] = [eq(documents.workspaceId, workspace.id)];
 
     const search = searchParams.get("search")?.trim();
     if (search) {
       const pattern = `%${search}%`;
-      conditions.push(
-        or(
-          ilike(documents.filename, pattern),
-          ilike(documents.filepath, pattern),
-          ilike(documents.fileHash, pattern),
-        ),
+      const searchCondition = or(
+        ilike(documents.filename, pattern),
+        ilike(documents.filepath, pattern),
+        ilike(documents.fileHash, pattern),
       );
+      if (searchCondition) conditions.push(searchCondition);
     }
 
     const status = searchParams.get("status");

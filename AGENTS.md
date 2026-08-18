@@ -4,14 +4,14 @@
 This version has breaking changes — APIs, conventions, and file structure may all differ from your training data. Read the relevant guide in `node_modules/next/dist/docs/` before writing any code. Heed deprecation notices.
 <!-- END:nextjs-agent-rules -->
 
-# Cortex — RAG Chat
+## Cortex — RAG Chat
 
 > Always assume the dev server (`pnpm dev`) is running. If it isn't, ask the user to start it before making changes that need verification.
 
 ## Commands
 
 | Action | Command |
-|---|---|
+| --- | --- |
 | Dev server | `pnpm dev` |
 | Build | `pnpm build` |
 | Production start | `pnpm start` |
@@ -56,6 +56,7 @@ docker compose up -d    # starts postgres+pgvector + valkey
 ## AI SDK 7 (planned, not yet installed)
 
 When you add AI SDK packages, the streaming API differs from older versions:
+
 - `convertToModelMessages(messages)` — UI messages → model messages
 - `streamText({ model, system, messages, tools, stopWhen })`
 - `createUIMessageStreamResponse({ stream: toUIMessageStream({ stream }) })`
@@ -64,7 +65,7 @@ When you add AI SDK packages, the streaming API differs from older versions:
 ## Key directories
 
 | Path | Purpose |
-|---|---|
+| --- | --- |
 | `app/` | App Router pages + API routes |
 | `app/api/scan-docs/route.ts` | GET — scans `docs/` folder, tracks files |
 | `components/ui/` | shadcn/ui components |
@@ -88,3 +89,14 @@ Planned but not yet created: `lib/ai/`, `lib/actions/`, `app/api/chat/`, `provid
 - Entrypoints: `app/page.tsx` (home, currently CNA boilerplate), `app/dashboard/page.tsx` (dashboard with sidebar).
 - `docs/` directory is the document source; `/api/scan-docs` reads files from there, SHA-256 hashes them, and tracks in `documents` table.
 - Path alias `@/` maps to root (configured in tsconfig paths).
+- If creating client side api follow structure, then `api/<feature>/api.ts|helpers.ts|types.ts|query.ts` , use axios instance from `api/client.ts` . Also use `api/endpoints.ts` to store all endpoints.
+
+## UI/Design Consistency
+
+- **Use `AppBreadcrumb`** (`components/app-breadcrumb.tsx`) for all dashboard pages — passes segments array with `label` and optional `href`.
+- **Placeholder pages** follow the pattern in `app/(authenticated)/dashboard/documents/audit-logs/page.tsx`:
+  - `<AppBreadcrumb />` at top
+  - Centered card: `flex flex-1 flex-col items-center justify-center gap-4 rounded-lg border border-dashed p-8 text-center`
+  - Icon pair in `text-muted-foreground` with `size-12`
+  - Title: `text-lg font-semibold`, description: `text-sm text-muted-foreground`
+- Reuse existing UI components from `components/ui/` (shadcn/ui with `@shadcn/react` render prop pattern).

@@ -13,6 +13,7 @@ import {
 import { parseAsInteger, parseAsString, useQueryState } from "nuqs"
 
 declare module "@tanstack/table-core" {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars -- generic must match TableMeta<TData>
   interface TableMeta<TData extends RowData> {
     /** Label shown in table meta */
     label?: string
@@ -114,7 +115,7 @@ export function useDataTable<TData>({
   const joinedDeps = resetDeps.join("|")
   useEffect(() => {
     setPage(1)
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+     
   }, [joinedDeps, setPage])
 
   return {

@@ -1,16 +1,7 @@
-import { AppBreadcrumb } from "@/components/app-breadcrumb";
-import { DocumentsTable } from "@/components/documents-table";
-
 export default function DashboardPage() {
-	return (
-		<>
-			<AppBreadcrumb
-				segments={[
-					{ label: "Dashboard", href: "/dashboard" },
-					{ label: "Documents" },
-				]}
-			/>
-			<DocumentsTable />
-		</>
-	);
+  return (
+    <div className="flex h-full items-center justify-center">
+      <p className="text-muted-foreground">Dashboard placeholder</p>
+    </div>
+  );
 }

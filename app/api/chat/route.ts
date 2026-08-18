@@ -1,5 +1,7 @@
 import { createResource } from "@/lib/actions/resources";
 import { findRelevantContent } from "@/lib/ai/embedding";
+import { getCurrentUser } from "@/lib/session";
+import { getActiveWorkspace } from "@/lib/workspaces";
 import {
   convertToModelMessages,
   createUIMessageStreamResponse,
@@ -10,11 +12,28 @@ import {
   isStepCount,
 } from "ai";
 import { z } from "zod";
+import { NextResponse } from "next/server";
 
 // Allow streaming responses up to 30 seconds
 export const maxDuration = 30;
 
 export async function POST(req: Request) {
+  const user = await getCurrentUser();
+  if (!user) {
+    return NextResponse.json(
+      { success: false, error: "Unauthorized" },
+      { status: 401 },
+    );
+  }
+
+  const workspace = await getActiveWorkspace(user.id);
+  if (!workspace) {
+    return NextResponse.json(
+      { success: false, error: "No active workspace" },
+      { status: 400 },
+    );
+  }
+
   const { messages }: { messages: UIMessage[] } = await req.json();
 
   const result = streamText({
@@ -33,14 +52,15 @@ If the user provides a random piece of knowledge unprompted, use this tool witho
             .string()
             .describe("the content or resource to add to the knowledge base"),
         }),
-        execute: async ({ content }) => createResource(content),
+        execute: async ({ content }) => createResource(content, workspace.id),
       }),
       getInformation: tool({
         description: `get information from your knowledge base to answer questions.`,
         inputSchema: z.object({
           question: z.string().describe("the users question"),
         }),
-        execute: async ({ question }) => findRelevantContent(question),
+        execute: async ({ question }) =>
+          findRelevantContent(question, workspace.id),
       }),
     },
   });

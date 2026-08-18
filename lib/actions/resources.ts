@@ -14,10 +14,11 @@ export interface CreateResourceResult {
 
 /**
  * Creates a resource by chunking the content, generating embeddings,
- * and storing both in the database.
+ * and storing both in the database, scoped to the given workspace.
  */
 export async function createResource(
   content: string,
+  workspaceId: string,
 ): Promise<CreateResourceResult> {
   try {
     if (!content || content.trim().length === 0) {
@@ -27,7 +28,7 @@ export async function createResource(
     // 1. Insert the resource
     const [resource] = await db
       .insert(resources)
-      .values({ content })
+      .values({ workspaceId, content })
       .returning({ id: resources.id });
 
     // 2. Chunk the content
@@ -40,6 +41,7 @@ export async function createResource(
     if (chunks.length > 0) {
       await db.insert(embeddings).values(
         chunks.map((chunk, i) => ({
+          workspaceId,
           resourceId: resource.id,
           content: chunk,
           embedding: vectors[i],

@@ -1,5 +1,12 @@
 import apiClient from "@/api/client";
-import type { ChatRequest } from "./types";
+import { endpoints } from "@/api/endpoints";
+import type {
+  ChatRequest,
+  ChatThreadDetailResponse,
+  ChatThreadResponse,
+  ChatThreadsResponse,
+  RenameChatThreadInput,
+} from "./types";
 
 /**
  * Send a chat message and receive a streaming response.
@@ -15,7 +22,7 @@ export async function sendChatMessage(
   body: ChatRequest,
   signal?: AbortSignal,
 ): Promise<Response> {
-  return fetch("/api/chat", {
+  return fetch(endpoints.chat.stream, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(body),
@@ -23,12 +30,48 @@ export async function sendChatMessage(
   });
 }
 
-/** Fetch the list of past chat conversations */
-export async function getChatConversations(): Promise<
-  { id: string; title: string; createdAt: string }[]
-> {
-  const { data } = await apiClient.get<
-    { id: string; title: string; createdAt: string }[]
-  >("/chat/conversations");
+/** Fetch a page of chat threads (ordered by most recently updated) */
+export async function getChatThreads(
+  offset = 0,
+  limit = 20,
+): Promise<ChatThreadsResponse> {
+  const { data } = await apiClient.get<ChatThreadsResponse>(
+    endpoints.chat.threads,
+    { params: { offset, limit } },
+  );
+  return data;
+}
+
+/**
+ * Get-or-create a chat thread:
+ * returns the user's existing empty thread if one exists,
+ * otherwise creates a new one.
+ */
+export async function createOrGetEmptyThread(): Promise<ChatThreadResponse> {
+  const { data } = await apiClient.post<ChatThreadResponse>(
+    endpoints.chat.threads,
+  );
+  return data;
+}
+
+/** Fetch a thread together with its messages */
+export async function getChatThread(
+  id: string,
+): Promise<ChatThreadDetailResponse> {
+  const { data } = await apiClient.get<ChatThreadDetailResponse>(
+    endpoints.chat.thread(id),
+  );
+  return data;
+}
+
+/** Rename a thread */
+export async function renameChatThread(
+  id: string,
+  input: RenameChatThreadInput,
+): Promise<ChatThreadResponse> {
+  const { data } = await apiClient.patch<ChatThreadResponse>(
+    endpoints.chat.thread(id),
+    input,
+  );
   return data;
 }
